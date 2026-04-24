@@ -1,5 +1,6 @@
 # app/api/keycloak.py
 import httpx
+import os
 from functools import lru_cache
 from jose import jwt, JWTError
 from fastapi import HTTPException, status
