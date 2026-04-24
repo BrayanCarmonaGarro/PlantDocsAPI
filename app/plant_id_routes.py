@@ -47,15 +47,13 @@ async def identify_plant(body: IdentifyRequest):
 
     # ── 1. Llamar a Plant.id ──────────────────────────────────────────────────
     async with httpx.AsyncClient(timeout=30) as client:
-        response = await client.post(
-            PLANT_ID_URL,
-            headers={"Api-Key": settings.plant_id_api_key, "Content-Type": "application/json"},
-            json={
-                "images": [f"data:image/jpeg;base64,{body.image_base64}"],
-                "similar_images": False,
-                "details": DETAILS,
-            },
-        )
+            response = await client.post(
+        f"{PLANT_ID_URL}?details={DETAILS}&language=es",
+        headers={"Api-Key": settings.plant_id_api_key, "Content-Type": "application/json"},
+        json={
+            "images": [f"data:image/jpeg;base64,{body.image_base64}"],
+        },
+    )
 
     if response.status_code not in (200, 201):
         raise HTTPException(status_code=502, detail=f"Plant.id error: {response.text}")
