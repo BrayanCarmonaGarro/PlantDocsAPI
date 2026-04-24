@@ -69,6 +69,8 @@ async def identify_plant(body: IdentifyRequest):
 
     top = suggestions[0]
     details = top.get("details", {})
+    print("TOP SUGGESTION:", top)
+    print("DETAILS:", details)
     probability = round(top.get("probability", 0), 4)
 
     scientific_name = top.get("name", "Unknown")
