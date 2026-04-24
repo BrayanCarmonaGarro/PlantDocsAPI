@@ -300,6 +300,52 @@ class UpdateUserPayload(BaseModel):
     descripcion: Optional[str]  = None
     esPublico:   Optional[bool] = None
 
+
+# ─── POST /api/users/{user_id}/plants ────────────────────────────────────────
+
+class CreatePlantPayload(BaseModel):
+    speciesId: str
+    nickname: str
+    status: Literal["healthy", "needs-attention", "in-treatment", "critical"] = "healthy"
+    acquisitionDate: str
+    notes: Optional[str] = None
+    purchasePrice: Optional[float] = None
+
+@router.post("/api/users/{user_id}/plants", response_model=UserPlantModel)
+def create_plant(user_id: str, payload: CreatePlantPayload) -> dict:
+    from .firebase import get_firestore_client
+    import uuid
+
+    db = get_firestore_client()
+
+    # Verificar que la species existe
+    get_document("species", payload.speciesId)
+
+    now = datetime.now(timezone.utc).isoformat()
+    plant_id = f"plant-{uuid.uuid4().hex[:8]}"
+
+    plant_data = {
+        "id": plant_id,
+        "userId": user_id,
+        "speciesId": payload.speciesId,
+        "nickname": payload.nickname,
+        "status": payload.status,
+        "acquisitionDate": payload.acquisitionDate,
+        "notes": payload.notes,
+        "purchasePrice": payload.purchasePrice,
+        "photos": [],
+        "hasActivePests": False,
+        "lastWatered": None,
+        "lastFertilized": None,
+        "lastNutrients": None,
+        "createdAt": now,
+        "updatedAt": now,
+    }
+
+    db.collection("user_plants").document(plant_id).set(plant_data)
+
+    return plant_data
+
 @router.patch("/api/users/{user_id}")
 def update_user(user_id: str, payload: UpdateUserPayload) -> dict:
     user = get_document("users", user_id)
