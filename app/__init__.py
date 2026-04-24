@@ -5,6 +5,10 @@ from .config import get_settings
 from .firebase import get_firestore_client
 from .routes import router
 from .auth_routes import router as auth_router
+from .plant_id_routes import router as plant_id_router
+
+# dentro de create_app():
+
 
 
 def create_app() -> FastAPI:
@@ -30,4 +34,6 @@ def create_app() -> FastAPI:
 
     app.include_router(router)
     app.include_router(auth_router)
+
+    app.include_router(plant_id_router)
     return app

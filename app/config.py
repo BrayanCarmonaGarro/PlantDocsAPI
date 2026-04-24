@@ -15,6 +15,10 @@ class Settings:
         self.api_port = int(os.getenv("API_PORT", "8000"))
         self.api_env = os.getenv("API_ENV", "development")
 
+        self.plant_id_api_key = os.getenv("PLANT_ID_API_KEY", "")
+        if not self.plant_id_api_key:
+            raise ValueError("PLANT_ID_API_KEY no está configurada.")
+
         raw_cors_origins = os.getenv("CORS_ORIGINS", "*")
         self.cors_origins = [
             origin.strip() for origin in raw_cors_origins.split(",") if origin.strip()
